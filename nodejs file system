@@ -1,0 +1,54 @@
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const folderPath = '/path/to/folder'; // Specify the folder path where you want to create the text file
+
+app.post('/create_text_file', (req, res) => {
+  const currentDateTime = new Date();
+  const timestamp = currentDateTime.toISOString();
+  const fileName = currentDateTime.toISOString().replace(/[-:.]/g, '') + '.txt';
+  const filePath = path.join(folderPath, fileName);
+
+  fs.writeFile(filePath, timestamp, (err) => {
+    if (err) {
+      console.error('Error creating text file:', err);
+      res.status(500).send('Error creating text file');
+    } else {
+      console.log(`Text file "${fileName}" created in the folder: ${folderPath}`);
+      res.status(200).send(`Text file "${fileName}" created in the folder: ${folderPath}`);
+    }
+  });
+});
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
+
+
+
+
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+const folderPath = '/path/to/folder'; // Specify the folder path where the text files are located
+
+app.get('/get_text_files', (req, res) => {
+  fs.readdir(folderPath, (err, files) => {
+    if (err) {
+      console.error('Error retrieving text files:', err);
+      res.status(500).send('Error retrieving text files');
+    } else {
+      const textFiles = files.filter(file => file.endsWith('.txt'));
+      console.log('Text files:', textFiles);
+      res.status(200).json(textFiles);
+    }
+  });
+});
+
+app.listen(3000, () => {
+  console.log('Server started on port 3000');
+});
